@@ -24,6 +24,9 @@ const getTextFrame = (message: string, frame: number): string[] => {
   }
   if (lines.length >= MAX_FRAME_LINES) {
     lines.push('');
+    lines.push('');
+    lines.push('');
+    lines.push('');
     lines = ['', ...lines];
 
   }
