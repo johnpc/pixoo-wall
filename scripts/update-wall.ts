@@ -23,19 +23,10 @@ const getTextFrame = (message: string, frame: number): string[] => {
     }
   }
   if (lines.length >= MAX_FRAME_LINES) {
-    lines.push('');
-    lines.push('');
-    lines.push('');
-    lines.push('');
-    lines = ['', ...lines];
-
+    lines = [' ', ' ', ...lines];
   }
 
-  if (lines.length <= MAX_FRAME_LINES) {
-    return lines;
-  }
-
-  return lines.slice(frame, MAX_FRAME_LINES + frame);
+  return lines;
 }
 
 const main = async () => {
@@ -52,12 +43,13 @@ const main = async () => {
     const mostRecentMessage = await getCurrentMessage();
     console.log({mostRecentMessage});
     const frameContent = getTextFrame(mostRecentMessage?.content!, frame);
+    const frameLines = frameContent.slice(frame, MAX_FRAME_LINES + frame);
     console.log({frameContent});
     pixoo.drawText("Write a message!", [0, 0], Color.Green)
     pixoo.drawText("--- jpc.io/wall ---", [0, 10], Color.Red)
     pixoo.drawText("----------------", [0, 20], Color.Apricot)
     let yCoordinate = 25;
-    for (const frameMessage of frameContent) {
+    for (const frameMessage of frameLines) {
       pixoo.drawText(frameMessage, [0, yCoordinate], Color.Purple);
       yCoordinate += VERTICAL_SPACING;
     }
