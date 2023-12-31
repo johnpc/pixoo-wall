@@ -154,9 +154,9 @@ export default function Home() {
                 {currentMessage ? currentMessage.content : ""}
               </ListItemContent>
               <Typography level="body-xs">
-                {dateToString(new Date(
+                &nbsp;{dateToString(new Date(
                   currentMessage ? currentMessage.createdAt : ""
-                  ))}
+                ))}
               </Typography>
             </ListItem>
           </div>
@@ -183,7 +183,7 @@ export default function Home() {
                     </ListItemDecorator>
                     <ListItemContent>{message.content}</ListItemContent>
                     <Typography level="body-xs">
-                      {dateToString(new Date(message.createdAt))}
+                      &nbsp;{dateToString(new Date(message.createdAt))}
                     </Typography>
                   </ListItem>
                   <ListDivider inset={inset} />
