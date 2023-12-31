@@ -6,12 +6,14 @@ import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import Input from "@mui/joy/Input";
 import Button from "@mui/joy/Button";
+import Chip from "@mui/joy/Chip";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemContent from "@mui/joy/ListItemContent";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListDivider from "@mui/joy/ListDivider";
 import Avatar from "@mui/joy/Avatar";
+import Link from '@mui/joy/Link';
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
@@ -191,6 +193,7 @@ export default function Home() {
               ))}
             </List>
           </div>
+          <p>How did you make this? <Chip>Check it out on <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link></Chip></p>
         </Sheet>
       </main>
     </CssVarsProvider>
