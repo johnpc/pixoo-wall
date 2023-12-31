@@ -82,10 +82,11 @@ export default function Home() {
   const ref = React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLInputElement>;
 
   const createMessage = async () => {
-    const { errors, data: newTodo } = await client.models.Message.create({
+    const { errors, data: newMessage } = await client.models.Message.create({
       content: ref.current.value,
     })
-    console.log(errors, newTodo);
+    console.log(errors, newMessage);
+    setCurrentMessage(newMessage);
   }
 
   return (
