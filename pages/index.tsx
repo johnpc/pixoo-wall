@@ -22,6 +22,8 @@ import config from "../amplifyconfiguration.json";
 import { getCurrentMessage } from "@/helpers/get-current-message";
 import wallboardImage from '../public/pixoo-wallboard.png';
 import Link from "next/link";
+import ContactSupport from '@mui/icons-material/ContactSupport';
+import QuestionAnswer from '@mui/icons-material/QuestionAnswer';
 
 Amplify.configure(config);
 const client = generateClient<Schema>();
@@ -173,13 +175,18 @@ export default function Home() {
           </div>
         </Sheet>
         <Sheet sx={sheetCss} variant="outlined">
-
+          <Typography level="h4" component="h1">
+            <b>This is what it looks like on my wall at home:</b>
+          </Typography>
           <AspectRatio variant="outlined" ratio="1" objectFit="cover">
             <Image alt="Wallboard Image" src={wallboardImage} layout="fill" placeholder="blur" />
           </AspectRatio>
-          <div>
-            How did you make this? <Chip>Check it out on <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link></Chip>
-          </div>
+          <span>
+          <Typography startDecorator={'> '} mb={2}>
+            {"\"John, how did you make this?\""}
+          </Typography>
+          &nbsp;&nbsp;&nbsp;&nbsp;<Chip><QuestionAnswer />&nbsp;Check it out on <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link></Chip>
+          </span>
           <ListDivider inset={inset} />
 
           <div>
