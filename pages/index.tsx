@@ -21,7 +21,7 @@ Amplify.configure(config);
 const client = generateClient<Schema>();
 
 const sheetCss = {
-  width: 300,
+  width: 500,
   mx: "auto", // margin left & right
   my: 4, // margin top & bottom
   py: 3, // padding top & bottom
@@ -105,6 +105,12 @@ export default function Home() {
     fetch('/api/notify');
   };
 
+  const dateToString = (date: Date) => {
+    const isPm = date.getHours() > 12;
+    const hours = date.getHours() === 0 ? 12 : isPm ? date.getHours() - 12 : date.getHours();
+    return `${date.toDateString()} at ${hours}:${date.getMinutes()}${isPm ? 'pm' : 'am'}`;
+  }
+
   return (
     <CssVarsProvider>
       <main>
@@ -142,15 +148,15 @@ export default function Home() {
           <div key={inset || "default"}>
             <ListItem>
               <ListItemDecorator>
-                <Avatar size="sm" src="/static/images/avatar/1.jpg" />
+                <Avatar size="sm" src="/static/images/avatar/1.jpg" />&nbsp;
               </ListItemDecorator>
               <ListItemContent>
-                &nbsp;{currentMessage ? currentMessage.content : ""}
+                {currentMessage ? currentMessage.content : ""}
               </ListItemContent>
-              <Typography level="body-sm">
-                {new Date(
+              <Typography level="body-xs">
+                {dateToString(new Date(
                   currentMessage ? currentMessage.createdAt : ""
-                  ).toDateString()}
+                  ))}
               </Typography>
             </ListItem>
           </div>
@@ -176,8 +182,8 @@ export default function Home() {
                       <Avatar size="sm" src="/static/images/avatar/1.jpg" />
                     </ListItemDecorator>
                     <ListItemContent>{message.content}</ListItemContent>
-                    <Typography level="body-sm">
-                      {new Date(message.createdAt).toDateString()}
+                    <Typography level="body-xs">
+                      {dateToString(new Date(message.createdAt))}
                     </Typography>
                   </ListItem>
                   <ListDivider inset={inset} />
