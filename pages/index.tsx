@@ -108,7 +108,12 @@ export default function Home() {
     });
     console.log(errors, newMessage);
     ref.current.value = '';
-    fetch('/api/notify');
+    fetch('/api/notify', {
+      method: 'POST',
+      body: JSON.stringify({
+        message: newMessage.content,
+      }),
+    });
   };
 
   const dateToString = (date: Date) => {
