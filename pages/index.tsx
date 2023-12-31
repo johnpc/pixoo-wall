@@ -13,12 +13,16 @@ import ListItemContent from "@mui/joy/ListItemContent";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListDivider from "@mui/joy/ListDivider";
 import Avatar from "@mui/joy/Avatar";
-import Link from '@mui/joy/Link';
+import AspectRatio from "@mui/joy/AspectRatio";
+import Image from 'next/image';
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
 import config from "../amplifyconfiguration.json";
 import { getCurrentMessage } from "@/helpers/get-current-message";
+import wallboardImage from '../public/pixoo-wallboard.png';
+import Link from "next/link";
+
 Amplify.configure(config);
 const client = generateClient<Schema>();
 
@@ -164,6 +168,15 @@ export default function Home() {
           </div>
         </Sheet>
         <Sheet sx={sheetCss} variant="outlined">
+
+          <AspectRatio variant="outlined" ratio="1" objectFit="cover">
+            <Image alt="Wallboard Image" src={wallboardImage} layout="fill" placeholder="blur" />
+          </AspectRatio>
+          <div>
+            How did you make this? <Chip>Check it out on <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link></Chip>
+          </div>
+          <ListDivider inset={inset} />
+
           <div>
             <Typography level="h4" component="h1">
               <b>Previous messages:</b>
@@ -193,7 +206,6 @@ export default function Home() {
               ))}
             </List>
           </div>
-          <p>How did you make this? <Chip>Check it out on <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link></Chip></p>
         </Sheet>
       </main>
     </CssVarsProvider>
