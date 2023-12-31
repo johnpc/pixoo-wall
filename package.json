@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "sandbox": "amplify sandbox",
-    "pixoo": "tsx scripts/update-wall.ts"
+    "pixoo": "tsx scripts/update-wall.ts",
+    "generate-prod-config": "amplify generate config --app-id d3nwitg8d6m7ui --branch main"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
