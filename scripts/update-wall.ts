@@ -8,7 +8,7 @@ const MAX_FRAME_LINES = 5;
 const VERTICAL_SPACING = 8;
 
 const sleep = async () => await new Promise(resolve => setTimeout(resolve, 500));
-const getTextFrame = (message: string, frame: number): string[] => {
+const getLinesOfText = (message: string): string[] => {
   if (message.length < MAX_LINE_CHARS) {
     return [message];
   }
@@ -22,6 +22,7 @@ const getTextFrame = (message: string, frame: number): string[] => {
       line = '';
     }
   }
+  lines.push(line);
   if (lines.length >= MAX_FRAME_LINES) {
     lines = [' ', ' ', ...lines];
   }
@@ -42,9 +43,9 @@ const main = async () => {
     console.log({cleared: true});
     const mostRecentMessage = await getCurrentMessage();
     console.log({mostRecentMessage});
-    const frameContent = getTextFrame(mostRecentMessage?.content!, frame);
-    const frameLines = frameContent.slice(frame, MAX_FRAME_LINES + frame);
-    console.log({frameContent});
+    const allLinesOfText = getLinesOfText(mostRecentMessage?.content!);
+    const frameLines = allLinesOfText.slice(frame, MAX_FRAME_LINES + frame);
+    console.log({allLinesOfText});
     pixoo.drawText("Write a message!", [0, 0], Color.Green)
     pixoo.drawText("--- jpc.io/wall ---", [0, 10], Color.Red)
     pixoo.drawText("----------------", [0, 20], Color.Apricot)
@@ -57,11 +58,11 @@ const main = async () => {
     console.log({ drawn: true });
     await pixoo.push()
     console.log({ pushed: true });
-    frame++;
-    if (frame >= frameContent.length) {
+    if (frame >= allLinesOfText.length) {
       console.log({ restart: true });
       frame = 0;
     }
+    frame++;
     await sleep();
     console.log({ slept: true });
   } while (true);
