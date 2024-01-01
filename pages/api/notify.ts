@@ -12,7 +12,7 @@ export default function handler(
   const { message } = JSON.parse(req.body) as {
     message: string;
   };
-  console.log({endpoint: 'notify'});
+  console.log({endpoint: 'notify', topic: process.env.UNIQUE_NOTIFICATION_TOPIC});
   const notificationMessage = `New message posted to John's wall: ${message}`;
   fetch(`https://ntfy.sh/${process.env.UNIQUE_NOTIFICATION_TOPIC}`, {
     method: "POST", // PUT works too
