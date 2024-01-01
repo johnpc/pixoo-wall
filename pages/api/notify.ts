@@ -5,7 +5,7 @@ type Data = {
   sent: boolean
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -14,10 +14,13 @@ export default function handler(
   };
   console.log({endpoint: 'notify', topic: process.env.UNIQUE_NOTIFICATION_TOPIC});
   const notificationMessage = `New message posted to John's wall: ${message}`;
-  fetch(`https://ntfy.sh/${process.env.UNIQUE_NOTIFICATION_TOPIC}`, {
+  const fetchResponse = await fetch(`https://ntfy.sh/${process.env.UNIQUE_NOTIFICATION_TOPIC}`, {
     method: "POST", // PUT works too
     body: notificationMessage,
   });
+  const status = fetchResponse.status;
+  const responseJson = await fetchResponse.json();
+  console.log({ nftyTopic: process.env.UNIQUE_NOTIFICATION_TOPIC, status, responseJson })
 
-  res.status(200).json({ sent: true })
+  res.status(status).json({ sent: status === 200 })
 }
