@@ -74,27 +74,29 @@ export default function Home() {
   const [currentMessage, setCurrentMessage] =
     React.useState<Schema["Message"]>();
   const [messages, setMessages] = React.useState<Schema["Message"][]>([]);
-  async function setup() {
-    const { data } = await client.models.Message.list();
-    data.sort((a, b) =>
-      new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1
-    );
-    setMessages(data);
+
+  const sortMessages = (a: Schema["Message"], b: Schema["Message"]) =>
+    new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1;
+
+  const setupCurrentMessage = async () => {
     const currentMessage = await getCurrentMessage();
     setCurrentMessage(currentMessage);
+  };
+
+  async function setup() {
+    const { data } = await client.models.Message.list();
+    data.sort(sortMessages);
+    setMessages(data);
+    await setupCurrentMessage();
   }
 
   React.useEffect(() => {
     setup();
     const sub = client.models.Message.observeQuery().subscribe(({ items }) => {
-      const messages = [...items];
-      messages.sort((a, b) =>
-        new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime()
-          ? 1
-          : -1
-      );
-      setMessages(messages);
-      setCurrentMessage(messages[0]);
+      const data = [...items];
+      data.sort(sortMessages);
+      setMessages(data);
+      setupCurrentMessage();
     });
 
     return () => sub.unsubscribe();
@@ -123,12 +125,11 @@ export default function Home() {
       date.getHours() === 0
         ? 12
         : isPm
-        ? date.getHours() - 12
-        : date.getHours();
-    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-    return `${date.toDateString()} at ${hours}:${minutes}${
-      isPm ? "pm" : "am"
-    }`;
+          ? date.getHours() - 12
+          : date.getHours();
+    const minutes =
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    return `${date.toDateString()} at ${hours}:${minutes}${isPm ? "pm" : "am"}`;
   };
 
   return (
