@@ -74,6 +74,7 @@ export default function Home() {
   const [currentMessage, setCurrentMessage] =
     React.useState<Schema["Message"]>();
   const [messages, setMessages] = React.useState<Schema["Message"][]>([]);
+  const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(true);
 
   const sortMessages = (a: Schema["Message"], b: Schema["Message"]) =>
     new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1;
@@ -104,6 +105,8 @@ export default function Home() {
 
   const ref =
     React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLInputElement>;
+  const buttonRef =
+    React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLButtonElement>;
 
   const createMessage = async () => {
     const { errors, data: newMessage } = await client.models.Message.create({
@@ -119,14 +122,19 @@ export default function Home() {
     });
   };
 
+  const onInputChange = (e: React.BaseSyntheticEvent) => {
+    const shouldDisableButton = !e.target.value.length;
+    setButtonDisabled(shouldDisableButton);
+  };
+
   const dateToString = (date: Date) => {
     const isPm = date.getHours() > 12;
     const hours =
       date.getHours() === 0
         ? 12
         : isPm
-          ? date.getHours() - 12
-          : date.getHours();
+        ? date.getHours() - 12
+        : date.getHours();
     const minutes =
       date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
     return `${date.toDateString()} at ${hours}:${minutes}${isPm ? "pm" : "am"}`;
@@ -143,17 +151,22 @@ export default function Home() {
             </Typography>
           </div>
           <FormControl>
-            <FormLabel>Add a message</FormLabel>
+            <FormLabel>Add a message!</FormLabel>
             <Input
               // html input attribute
               slotProps={{ input: { ref } }}
               name="text"
               type="text"
               placeholder="Have a great day!"
+              onChange={onInputChange}
             />
           </FormControl>
 
-          <Button onClick={createMessage} sx={{ mt: 1 /* margin top */ }}>
+          <Button
+            disabled={buttonDisabled}
+            onClick={createMessage}
+            sx={{ mt: 1 /* margin top */ }}
+          >
             Post Message
           </Button>
           <Typography fontSize="sm" sx={{ alignSelf: "center" }}>
