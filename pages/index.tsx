@@ -78,7 +78,7 @@ export default function Home() {
   async function setup() {
     const { data } = await client.models.Message.list();
     data.sort((a, b) =>
-      new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? 1 : -1
+      new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1
     );
     setMessages(data);
     const currentMessage = await getCurrentMessage();
@@ -90,12 +90,12 @@ export default function Home() {
     const sub = client.models.Message.observeQuery().subscribe(({ items }) => {
       const messages = [...items];
       messages.sort((a, b) =>
-        new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime()
+        new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime()
           ? 1
           : -1
       );
       setMessages(messages);
-      setCurrentMessage(messages[messages.length - 1]);
+      setCurrentMessage(messages[0]);
     });
 
     return () => sub.unsubscribe();
