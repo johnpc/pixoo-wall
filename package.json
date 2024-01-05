@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "format": "npx prettier --write .",
     "sandbox": "amplify sandbox",
     "pixoo": "tsx scripts/update-wall.ts",
-    "generate-prod-config": "amplify generate config --app-id d3nwitg8d6m7ui --branch main"
+    "generate-prod-config": "amplify generate config --app-id d3nwitg8d6m7ui --branch main",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -32,7 +34,17 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write"
+    ],
+    "*.json": "prettier --write",
+    "*.yml": "prettier --write",
+    "*.md": "prettier --write"
   }
 }

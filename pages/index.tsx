@@ -14,16 +14,16 @@ import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListDivider from "@mui/joy/ListDivider";
 import Avatar from "@mui/joy/Avatar";
 import AspectRatio from "@mui/joy/AspectRatio";
-import Image from 'next/image';
+import Image from "next/image";
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
 import config from "../amplifyconfiguration.json";
 import { getCurrentMessage } from "@/helpers/get-current-message";
-import wallboardImage from '../public/pixoo-wallboard.png';
+import wallboardImage from "../public/pixoo-wallboard.png";
 import Link from "next/link";
-import ContactSupport from '@mui/icons-material/ContactSupport';
-import QuestionAnswer from '@mui/icons-material/QuestionAnswer';
+import ContactSupport from "@mui/icons-material/ContactSupport";
+import QuestionAnswer from "@mui/icons-material/QuestionAnswer";
 
 Amplify.configure(config);
 const client = generateClient<Schema>();
@@ -77,10 +77,9 @@ export default function Home() {
   const [messages, setMessages] = React.useState<Schema["Message"][]>([]);
   async function setup() {
     const { data } = await client.models.Message.list();
-    data
-      .sort((a, b) =>
-        new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? 1 : -1
-      );
+    data.sort((a, b) =>
+      new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? 1 : -1
+    );
     setMessages(data);
     const currentMessage = await getCurrentMessage();
     setCurrentMessage(currentMessage);
@@ -91,12 +90,13 @@ export default function Home() {
     const sub = client.models.Message.observeQuery().subscribe(({ items }) => {
       const messages = [...items];
       messages.sort((a, b) =>
-        new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? 1 : -1
+        new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime()
+          ? 1
+          : -1
       );
       setMessages(messages);
       setCurrentMessage(messages[messages.length - 1]);
-    }
-    );
+    });
 
     return () => sub.unsubscribe();
   }, []);
@@ -109,9 +109,9 @@ export default function Home() {
       content: ref.current.value,
     });
     console.log(errors, newMessage);
-    ref.current.value = '';
-    fetch('/api/notify', {
-      method: 'POST',
+    ref.current.value = "";
+    fetch("/api/notify", {
+      method: "POST",
       body: JSON.stringify({
         message: newMessage.content,
       }),
@@ -120,9 +120,16 @@ export default function Home() {
 
   const dateToString = (date: Date) => {
     const isPm = date.getHours() > 12;
-    const hours = date.getHours() === 0 ? 12 : isPm ? date.getHours() - 12 : date.getHours();
-    return `${date.toDateString()} at ${hours}:${date.getMinutes()}${isPm ? 'pm' : 'am'}`;
-  }
+    const hours =
+      date.getHours() === 0
+        ? 12
+        : isPm
+        ? date.getHours() - 12
+        : date.getHours();
+    return `${date.toDateString()} at ${hours}:${date.getMinutes()}${
+      isPm ? "pm" : "am"
+    }`;
+  };
 
   return (
     <CssVarsProvider>
@@ -161,15 +168,17 @@ export default function Home() {
           <div key={inset || "default"}>
             <ListItem>
               <ListItemDecorator>
-                <Avatar size="sm" src="/static/images/avatar/1.jpg" />&nbsp;
+                <Avatar size="sm" src="/static/images/avatar/1.jpg" />
+                &nbsp;
               </ListItemDecorator>
               <ListItemContent>
                 {currentMessage ? currentMessage.content : ""}
               </ListItemContent>
               <Typography level="body-xs">
-                &nbsp;{dateToString(new Date(
-                  currentMessage ? currentMessage.createdAt : ""
-                ))}
+                &nbsp;
+                {dateToString(
+                  new Date(currentMessage ? currentMessage.createdAt : "")
+                )}
               </Typography>
             </ListItem>
           </div>
@@ -179,13 +188,23 @@ export default function Home() {
             <b>This is what it looks like on my wall at home:</b>
           </Typography>
           <AspectRatio variant="outlined" ratio="1" objectFit="cover">
-            <Image alt="Wallboard Image" src={wallboardImage} layout="fill" placeholder="blur" />
+            <Image
+              alt="Wallboard Image"
+              src={wallboardImage}
+              layout="fill"
+              placeholder="blur"
+            />
           </AspectRatio>
           <span>
-          <Typography startDecorator={'> '} mb={2}>
-            {"\"John, how did you make this?\""}
-          </Typography>
-          &nbsp;&nbsp;&nbsp;&nbsp;<Chip><QuestionAnswer />&nbsp;Check it out on <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link></Chip>
+            <Typography startDecorator={"> "} mb={2}>
+              {'"John, how did you make this?"'}
+            </Typography>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <Chip>
+              <QuestionAnswer />
+              &nbsp;Check it out on{" "}
+              <Link href="https://github.com/johnpc/pixoo-wall">GitHub.</Link>
+            </Chip>
           </span>
           <ListDivider inset={inset} />
 
