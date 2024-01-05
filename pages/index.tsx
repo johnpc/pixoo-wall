@@ -22,7 +22,6 @@ import config from "../amplifyconfiguration.json";
 import { getCurrentMessage } from "@/helpers/get-current-message";
 import wallboardImage from "../public/pixoo-wallboard.png";
 import Link from "next/link";
-import ContactSupport from "@mui/icons-material/ContactSupport";
 import QuestionAnswer from "@mui/icons-material/QuestionAnswer";
 
 Amplify.configure(config);
@@ -126,7 +125,8 @@ export default function Home() {
         : isPm
         ? date.getHours() - 12
         : date.getHours();
-    return `${date.toDateString()} at ${hours}:${date.getMinutes()}${
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    return `${date.toDateString()} at ${hours}:${minutes}${
       isPm ? "pm" : "am"
     }`;
   };
