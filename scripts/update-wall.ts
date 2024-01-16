@@ -62,7 +62,7 @@ const main = async () => {
     pixoo.drawText("----------------", [0, 20], Color.Apricot);
     let yCoordinate = 25;
     for (const frameMessage of frameLines) {
-      pixoo.drawText(frameMessage, [0, yCoordinate], Color.Purple);
+      pixoo.drawText(frameMessage, [0, yCoordinate], Color.Gold);
       yCoordinate += VERTICAL_SPACING;
     }
 
