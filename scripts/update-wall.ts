@@ -39,6 +39,10 @@ const main = async () => {
 
   let frame = 0;
   do {
+    const date = new Date();
+    const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+    const mins =
+      date.getMinutes() < 10 ? `0${date.getMinutes}` : date.getMinutes();
     pixoo.clear();
     console.log({ cleared: true });
     const mostRecentMessage = await getCurrentMessage();
@@ -50,7 +54,11 @@ const main = async () => {
         : allLinesOfText.slice(frame, MAX_FRAME_LINES + frame);
     console.log({ allLinesOfText, frameLines, frame });
     pixoo.drawText("Write a message!", [0, 0], Color.Green);
-    pixoo.drawText("--- jpc.io/wall ---", [0, 10], Color.Red);
+    const url = "jpc.io/wall";
+    const divider = " -- ";
+    pixoo.drawText(url, [0, 10], Color.Red);
+    pixoo.drawText(divider, [38, 10], Color.Blue);
+    pixoo.drawText(`${hours}:${mins}`, [50, 10], Color.Coral);
     pixoo.drawText("----------------", [0, 20], Color.Apricot);
     let yCoordinate = 25;
     for (const frameMessage of frameLines) {
