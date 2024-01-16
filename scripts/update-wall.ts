@@ -55,10 +55,10 @@ const main = async () => {
     console.log({ allLinesOfText, frameLines, frame });
     pixoo.drawText("Write a message!", [0, 0], Color.Green);
     const url = "jpc.io/wall";
-    const divider = " - ";
+    const divider = " -- ";
     pixoo.drawText(url, [0, 10], Color.Red);
     pixoo.drawText(divider, [38, 10], Color.Blue);
-    pixoo.drawText(`${hours}:${mins}`, [45, 10], Color.Coral);
+    pixoo.drawText(`${hours}:${mins}`, [50, 10], Color.Coral);
     pixoo.drawText("----------------", [0, 20], Color.Apricot);
     let yCoordinate = 25;
     for (const frameMessage of frameLines) {
