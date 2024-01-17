@@ -34,11 +34,6 @@ const getLinesOfText = (message: string): string[] => {
 };
 
 const main = async () => {
-  console.log({ ip: process.env.PIXOO_IP! });
-  const pixoo = new PixooAPI(process.env.PIXOO_IP!);
-  await pixoo.initialize();
-  console.log({ initialized: true });
-
   let frame = 0;
   const date = new Date();
   const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
@@ -53,7 +48,10 @@ const main = async () => {
       ? allLinesOfText
       : allLinesOfText.slice(frame, MAX_FRAME_LINES + frame);
   console.log({ allLinesOfText, frameLines, frame });
-  pixoo.clear();
+  console.log({ ip: process.env.PIXOO_IP! });
+  const pixoo = new PixooAPI(process.env.PIXOO_IP!);
+  await pixoo.initialize();
+  console.log({ initialized: true });
   pixoo.drawText("Write a message!", [0, 0], Color.Green);
   const url = "jpc.io/wall";
   const divider = " - ";
