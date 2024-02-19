@@ -1,0 +1,19 @@
+{
+  "short_name": "JPC Wall",
+  "name": "JPC Wall",
+  "start_url": "/",
+  "dir": "auto",
+  "icons": [
+    {
+      "src": "logo_512_maskable.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "orientation": "any",
+  "background_color": "#FFF8DC",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#FFF8DC",
+  "description": "Write on John's wall!"
+}
