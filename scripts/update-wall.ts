@@ -1,8 +1,9 @@
 // Example crontab:
 // * * * * * cd /home/umbrel/repo/pixoo-wall && /home/umbrel/.nvm/versions/node/v20.10.0/bin/node /home/umbrel/repo/pixoo-wall/node_modules/.bin/tsx /home/umbrel/repo/pixoo-wall/scripts/update-wall.ts >> /tmp/output 2>&1
-import { getCurrentMessage } from "@/helpers/get-current-message";
+import { getCurrentMessage, addMessage } from "@/helpers/get-current-message";
 import dotenv from "dotenv";
 import { PixooAPI, Color } from "pixoo-api";
+import { getAiTextResponse } from "./ai";
 dotenv.config();
 
 const MAX_LINE_CHARS = 15;
@@ -33,7 +34,20 @@ const getLinesOfText = (message: string): string[] => {
   return lines;
 };
 
+const maybeAddAiMessage = async () => {
+  const date = new Date();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  // Update the board once a day
+  if (hour === 0 && minute === 0) {
+    const joke = await getAiTextResponse("tell me a joke.");
+    await addMessage(joke);
+  }
+};
+
 const main = async () => {
+  await maybeAddAiMessage();
+
   let frame = 0;
   const date = new Date();
   const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();

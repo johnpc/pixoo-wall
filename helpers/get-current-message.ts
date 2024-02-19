@@ -32,3 +32,9 @@ export const getCurrentMessage = async () => {
   console.log({ mostRecentMessage });
   return mostRecentMessage;
 };
+
+export const addMessage = async (content: string) => {
+  return await client.models.Message.create({
+    content,
+  });
+};
