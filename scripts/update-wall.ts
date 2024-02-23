@@ -40,7 +40,10 @@ const maybeAddAiMessage = async () => {
   const minute = date.getMinutes();
   // Update the board once a day
   if (hour === 0 && minute === 0) {
-    const joke = await getAiTextResponse("tell me a joke.");
+    const topic = await getAiTextResponse(
+      `give me a one word topic for a joke.`
+    );
+    const joke = await getAiTextResponse(`tell me a joke about ${topic}.`);
     await addMessage(joke);
   }
 };
