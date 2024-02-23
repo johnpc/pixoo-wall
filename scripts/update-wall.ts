@@ -26,11 +26,6 @@ const getLinesOfText = (message: string): string[] => {
       line = "";
     }
   }
-  lines.push(line);
-  if (lines.length >= MAX_FRAME_LINES) {
-    lines = [" ", " ", ...lines];
-  }
-
   return lines;
 };
 
@@ -61,7 +56,7 @@ const main = async () => {
   console.log({ mostRecentMessage });
   const allLinesOfText = getLinesOfText(mostRecentMessage?.content!);
   const frameLines =
-    allLinesOfText.length <= MAX_FRAME_LINES
+    allLinesOfText.length < MAX_FRAME_LINES
       ? allLinesOfText
       : allLinesOfText.slice(frame, MAX_FRAME_LINES + frame);
   console.log({ allLinesOfText, frameLines, frame });
