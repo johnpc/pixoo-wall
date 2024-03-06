@@ -5,27 +5,22 @@ import dotenv from "dotenv";
 import { PixooAPI, Color } from "pixoo-api";
 dotenv.config();
 
-const MAX_LINE_CHARS = 15;
+const MAX_LINE_CHARS = 17;
 const MAX_FRAME_LINES = 5;
 const VERTICAL_SPACING = 8;
 
 const sleep = async () =>
   await new Promise((resolve) => setTimeout(resolve, 1000));
+
+function* chunks(s: string, chunkSize: number) {
+  const arr = s.split("");
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    yield arr.slice(i, i + chunkSize);
+  }
+}
+
 const getLinesOfText = (message: string): string[] => {
-  if (message.length < MAX_LINE_CHARS) {
-    return [message];
-  }
-  let lines = [];
-  const words = message.split(" ");
-  let line = "> ";
-  for (const word of words) {
-    line = line + " " + word;
-    if (line.length >= MAX_LINE_CHARS) {
-      lines.push(line);
-      line = "";
-    }
-  }
-  return lines;
+  return [...chunks(message, MAX_LINE_CHARS)].map((line) => line.join(""));
 };
 
 const getJoke = async () => {
