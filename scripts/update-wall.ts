@@ -3,7 +3,6 @@
 import { getCurrentMessage, addMessage } from "@/helpers/get-current-message";
 import dotenv from "dotenv";
 import { PixooAPI, Color } from "pixoo-api";
-import { getAiTextResponse } from "./ai";
 dotenv.config();
 
 const MAX_LINE_CHARS = 15;
@@ -29,22 +28,30 @@ const getLinesOfText = (message: string): string[] => {
   return lines;
 };
 
-const maybeAddAiMessage = async () => {
+const getJoke = async () => {
+  const jokeResponse = await fetch("https://icanhazdadjoke.com/", {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  const jokeJson = await jokeResponse.json();
+  return jokeJson.joke;
+};
+
+const maybeAddJoke = async () => {
   const date = new Date();
   const hour = date.getHours();
   const minute = date.getMinutes();
   // Update the board once a day
   if (hour === 0 && minute === 0) {
-    const topic = await getAiTextResponse(
-      `give me a one word topic for a joke.`
-    );
-    const joke = await getAiTextResponse(`tell me a joke about ${topic}.`);
+    const joke = await getJoke();
     await addMessage(joke);
   }
 };
 
 const main = async () => {
-  await maybeAddAiMessage();
+  await maybeAddJoke();
 
   let frame = 0;
   const date = new Date();
