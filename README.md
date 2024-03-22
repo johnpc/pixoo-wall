@@ -1,6 +1,6 @@
 # Write an anonymous message on John's wall
 
-To write a message, visit [https://jpc.io/wall](jpc.io/wall) and submit the form!
+To write a message, visit [wall.jpc.io](https://wall.jpc.io) and submit the form!
 
 Your message will appear on the wall in my house
 

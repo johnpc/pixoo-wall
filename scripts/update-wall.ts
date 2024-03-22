@@ -20,6 +20,7 @@ function* chunks(s: string, chunkSize: number) {
 }
 
 const getLinesOfText = (message: string): string[] => {
+  // @ts-ignore
   return [...chunks(message, MAX_LINE_CHARS)].map((line) => line.join(""));
 };
 
@@ -67,7 +68,7 @@ const main = async () => {
   await pixoo.initialize();
   console.log({ initialized: true });
   pixoo.drawText("Write a message!", [0, 0], Color.Green);
-  const url = "jpc.io/wall";
+  const url = "wall.jpc.io";
   const divider = " - ";
   pixoo.drawText(url, [0, 10], Color.Red);
   pixoo.drawText(divider, [38, 10], Color.Blue);
