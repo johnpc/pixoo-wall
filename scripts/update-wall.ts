@@ -56,6 +56,81 @@ export const getWeather = async (zipcode: string) => {
   const current = weatherResponse[0].current;
   return `${current.skytext ?? "?????"} - ${current.temperature}`;
 };
+const AATA_BASE_URL = "https://rt.theride.org/bustime/api/v3";
+
+const fetchData = async (
+  endpoint: string,
+  args?: { [key: string]: string | number }
+) => {
+  const allArgs = {
+    ...(args ?? {}),
+    key: process.env.AATA_API_KEY,
+    format: "json",
+  } as { [key: string]: string };
+
+  const url = encodeURI(
+    AATA_BASE_URL +
+      `/${endpoint}?` +
+      Object.keys(allArgs)
+        .map((key) => `${key}=${allArgs[key]}`)
+        .join("&")
+  );
+  const response = await fetch(url);
+  return response.json();
+};
+
+const convertBustimeToDate = (bustime: string): Date => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const year = bustime.substring(0, 4);
+  const month = bustime.substring(4, 6);
+  const day = bustime.substring(6, 8);
+  const hour = bustime.substring(9, 11);
+  const minute = bustime.substring(12, 14);
+  const dateString = `${day} ${
+    months[parseInt(month) - 1]
+  } ${year} ${hour}:${minute}:00`;
+  const timestamp = Date.parse(dateString);
+  return new Date(timestamp);
+};
+export const predictArrivalTimes = async (busRoute: number, stopId: number) => {
+  const data = await fetchData("getpredictions", {
+    stpid: stopId,
+    rt: busRoute,
+    top: 3,
+  });
+  console.log({ data: data["bustime-response"].error });
+
+  const response = data["bustime-response"].prd?.map((prediction: any) => ({
+    direction: prediction.rtdir,
+    route: prediction.rt,
+    arrivalTime: convertBustimeToDate(prediction.prdtm).toLocaleString(),
+  }));
+  return response;
+};
+export const getBusArrivalTime = async (
+  busRoute: number,
+  stopId: number
+): Promise<Date | null> => {
+  const predictions = await predictArrivalTimes(busRoute, stopId);
+  if (!predictions) {
+    return null;
+  }
+  const prediction = predictions.pop();
+  return new Date(prediction.arrivalTime);
+};
 
 const main = async () => {
   try {
@@ -89,7 +164,21 @@ const main = async () => {
   pixoo.drawText(divider, [38, 7], Color.Blue);
   pixoo.drawText(`${hours}:${mins}`, [47, 7], Color.Coral);
   const weatherString = await getWeather("48103");
-  pixoo.drawText(weatherString, [0, 14], Color.Teal);
+  const busArrivalTime = await getBusArrivalTime(26, 1565);
+  if (busArrivalTime) {
+    pixoo.drawText(
+      `${weatherString} - b@${busArrivalTime
+        .toLocaleTimeString()
+        .split(":")
+        .slice(0, 2)
+        .join(":")}`,
+      [0, 14],
+      Color.Teal
+    );
+  } else {
+    pixoo.drawText(weatherString, [0, 14], Color.Teal);
+  }
+
   pixoo.drawText("----------------", [0, 20], Color.Apricot);
   let yCoordinate = 25;
   for (const frameMessage of frameLines) {
