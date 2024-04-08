@@ -58,7 +58,11 @@ export const getWeather = async (zipcode: string) => {
 };
 
 const main = async () => {
-  await maybeAddJoke();
+  try {
+    await maybeAddJoke();
+  } catch (e) {
+    console.log(e);
+  }
 
   let frame = 0;
   const date = new Date();
