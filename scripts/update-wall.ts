@@ -89,7 +89,7 @@ const main = async () => {
   pixoo.drawText(divider, [38, 7], Color.Blue);
   pixoo.drawText(`${hours}:${mins}`, [47, 7], Color.Coral);
   const weatherString = await getWeather("48103");
-  pixoo.drawText(weatherString, [0, 14], Color.LavenderBlush);
+  pixoo.drawText(weatherString, [0, 14], Color.Teal);
   pixoo.drawText("----------------", [0, 20], Color.Apricot);
   let yCoordinate = 25;
   for (const frameMessage of frameLines) {
