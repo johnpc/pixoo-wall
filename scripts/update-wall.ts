@@ -3,6 +3,7 @@
 import { getCurrentMessage, addMessage } from "@/helpers/get-current-message";
 import dotenv from "dotenv";
 import { PixooAPI, Color } from "pixoo-api";
+import weather from "weather-js";
 dotenv.config();
 
 const MAX_LINE_CHARS = 17;
@@ -46,6 +47,16 @@ const maybeAddJoke = async () => {
   }
 };
 
+export const getWeather = async (zipcode: string) => {
+  const weatherResponse: any = await new Promise((resolve) => {
+    weather.find({ search: zipcode, degreeType: "F" }, (_: any, result: any) =>
+      resolve(result)
+    );
+  });
+  const current = weatherResponse[0].current;
+  return `${current.skytext ?? "?????"} - ${current.temperature}`;
+};
+
 const main = async () => {
   await maybeAddJoke();
 
@@ -70,9 +81,11 @@ const main = async () => {
   pixoo.drawText("Write a message!", [0, 0], Color.Green);
   const url = "wall.jpc.io";
   const divider = " - ";
-  pixoo.drawText(url, [0, 10], Color.Red);
-  pixoo.drawText(divider, [38, 10], Color.Blue);
-  pixoo.drawText(`${hours}:${mins}`, [47, 10], Color.Coral);
+  pixoo.drawText(url, [0, 7], Color.Red);
+  pixoo.drawText(divider, [38, 7], Color.Blue);
+  pixoo.drawText(`${hours}:${mins}`, [47, 7], Color.Coral);
+  const weatherString = await getWeather("48103");
+  pixoo.drawText(weatherString, [0, 14], Color.LavenderBlush);
   pixoo.drawText("----------------", [0, 20], Color.Apricot);
   let yCoordinate = 25;
   for (const frameMessage of frameLines) {
