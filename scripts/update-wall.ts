@@ -54,7 +54,8 @@ export const getWeather = async (zipcode: string) => {
     );
   });
   const current = weatherResponse[0].current;
-  return `${current.skytext ?? "?????"} - ${current.temperature}`;
+  const mainWeatherDescription = (current.skytext ?? "?????").split(" ").pop();
+  return `${mainWeatherDescription} - ${current.temperature}`;
 };
 const AATA_BASE_URL = "https://rt.theride.org/bustime/api/v3";
 
