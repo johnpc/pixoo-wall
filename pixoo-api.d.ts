@@ -63,6 +63,7 @@ declare module "pixoo-api" {
     Violet = [238, 130, 238],
     Peach = [255, 218, 185],
     Apricot = [251, 206, 177],
+    Aqua = [150, 250, 150],
     Salmon = [250, 128, 114],
     Gold = [255, 215, 0],
     Khaki = [240, 230, 140],

@@ -167,16 +167,16 @@ const main = async () => {
   const busArrivalTime = await getBusArrivalTime(26, 1565);
   if (busArrivalTime) {
     pixoo.drawText(
-      `${weatherString} - b@${busArrivalTime
+      `${weatherString} @${busArrivalTime
         .toLocaleTimeString()
         .split(":")
         .slice(0, 2)
         .join(":")}`,
       [0, 14],
-      Color.Teal
+      [150, 250, 150] as any
     );
   } else {
-    pixoo.drawText(weatherString, [0, 14], Color.Teal);
+    pixoo.drawText(weatherString, [0, 14], [150, 250, 150] as any);
   }
 
   pixoo.drawText("----------------", [0, 20], Color.Apricot);
