@@ -25,28 +25,6 @@ const getLinesOfText = (message: string): string[] => {
   return [...chunks(message, MAX_LINE_CHARS)].map((line) => line.join(""));
 };
 
-const getJoke = async () => {
-  const jokeResponse = await fetch("https://icanhazdadjoke.com/", {
-    headers: {
-      Accept: "application/json",
-    },
-  });
-
-  const jokeJson = await jokeResponse.json();
-  return jokeJson.joke;
-};
-
-const maybeAddJoke = async () => {
-  const date = new Date();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  // Update the board once a day
-  if (hour === 0 && minute === 0) {
-    const joke = await getJoke();
-    await addMessage(joke);
-  }
-};
-
 export const getWeather = async (zipcode: string) => {
   const weatherResponse: any = await new Promise((resolve) => {
     weather.find({ search: zipcode, degreeType: "F" }, (_: any, result: any) =>
@@ -134,12 +112,6 @@ export const getBusArrivalTime = async (
 };
 
 const main = async () => {
-  try {
-    await maybeAddJoke();
-  } catch (e) {
-    console.log(e);
-  }
-
   let frame = 0;
   const date = new Date();
   const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();

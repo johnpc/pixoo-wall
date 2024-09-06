@@ -1,0 +1,11 @@
+.prettierignore
+.gitignore
+.husky
+.next
+.amplify
+.env
+.env.*
+*.ico
+*.png
+*.svg
+

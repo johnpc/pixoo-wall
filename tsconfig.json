@@ -19,5 +19,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "weatherjs.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".amplify", "amplify/**/*"]
 }

@@ -18,7 +18,7 @@ import Image from "next/image";
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
-import config from "../amplifyconfiguration.json";
+import config from "../amplify_outputs.json";
 import { getCurrentMessage } from "@/helpers/get-current-message";
 import wallboardImage from "../public/pixoo-wallboard.png";
 import Link from "next/link";
@@ -72,11 +72,16 @@ function ModeToggle() {
 
 export default function Home() {
   const [currentMessage, setCurrentMessage] =
-    React.useState<Schema["Message"]>();
-  const [messages, setMessages] = React.useState<Schema["Message"][]>([]);
+    React.useState<Schema["Message"]["type"]>();
+  const [messages, setMessages] = React.useState<Schema["Message"]["type"][]>(
+    []
+  );
   const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(true);
 
-  const sortMessages = (a: Schema["Message"], b: Schema["Message"]) =>
+  const sortMessages = (
+    a: Schema["Message"]["type"],
+    b: Schema["Message"]["type"]
+  ) =>
     new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1;
 
   const setupCurrentMessage = async () => {
@@ -117,7 +122,7 @@ export default function Home() {
     fetch("/api/notify", {
       method: "POST",
       body: JSON.stringify({
-        message: newMessage.content,
+        message: newMessage!.content,
       }),
     });
   };

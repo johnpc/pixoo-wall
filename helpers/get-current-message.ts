@@ -1,12 +1,12 @@
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
-import config from "../amplifyconfiguration.json";
+import config from "../amplify_outputs.json";
 Amplify.configure(config);
 const client = generateClient<Schema>();
 
 export const getCurrentMessage = async () => {
-  const allMessages: Schema["Message"][] = [];
+  const allMessages: Schema["Message"]["type"][] = [];
   // TODO add @index to sort by and only fetch most recent message
   // https://docs.amplify.aws/react/build-a-backend/graphqlapi/best-practice/query-with-sorting/
   let next;
