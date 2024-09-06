@@ -1,0 +1,54 @@
+name: health_checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  install:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_node
+      - uses: ./.github/actions/install_with_cache
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_node
+      - uses: ./.github/actions/build_with_cache
+  test_with_coverage:
+    needs:
+      - install
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_node
+      - uses: ./.github/actions/restore_install_cache
+      - run: npm run set-script-shell
+      - run: echo "{}" > amplify_outputs.json
+      - run: npm run build
+        env:
+          ADMIN_API_KEY: ADMIN_API_KEY
+  lint:
+    runs-on: ubuntu-latest
+    needs:
+      - install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_node
+      - uses: ./.github/actions/restore_install_cache
+      - run: npm run lint
