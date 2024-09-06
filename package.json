@@ -8,9 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "format": "npx prettier --write .",
-    "sandbox": "amplify sandbox",
+    "sandbox": "ampx sandbox",
     "pixoo": "tsx scripts/update-wall.ts",
-    "generate-prod-config": "amplify generate config --app-id d3nwitg8d6m7ui --branch main",
+    "generate-prod-config": "ampx generate outputs --app-id d3nwitg8d6m7ui --branch main",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -20,7 +20,7 @@
     "@fontsource/inter": "^5.0.16",
     "@mui/icons-material": "^5.15.2",
     "@mui/joy": "^5.0.0-beta.20",
-    "aws-amplify": "^6.0.9",
+    "aws-amplify": "^6.6.0",
     "dotenv": "^16.3.1",
     "next": "14.0.4",
     "pixoo-api": "^0.2.3",
@@ -29,8 +29,8 @@
     "weather-js": "^2.0.0"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^0.7.0",
-    "@aws-amplify/backend-cli": "^0.9.2",
+    "@aws-amplify/backend": "^1.2.1",
+    "@aws-amplify/backend-cli": "^1.2.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

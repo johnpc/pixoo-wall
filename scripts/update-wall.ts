@@ -25,17 +25,6 @@ const getLinesOfText = (message: string): string[] => {
   return [...chunks(message, MAX_LINE_CHARS)].map((line) => line.join(""));
 };
 
-const getJoke = async () => {
-  const jokeResponse = await fetch("https://icanhazdadjoke.com/", {
-    headers: {
-      Accept: "application/json",
-    },
-  });
-
-  const jokeJson = await jokeResponse.json();
-  return jokeJson.joke;
-};
-
 const maybeAddJoke = async () => {
   const date = new Date();
   const hour = date.getHours();

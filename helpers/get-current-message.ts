@@ -1,7 +1,7 @@
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
-import config from "../amplifyconfiguration.json";
+import config from "../amplify_outputs.json";
 Amplify.configure(config);
 const client = generateClient<Schema>();
 

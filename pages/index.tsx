@@ -18,7 +18,7 @@ import Image from "next/image";
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
-import config from "../amplifyconfiguration.json";
+import config from "../amplify_outputs.json";
 import { getCurrentMessage } from "@/helpers/get-current-message";
 import wallboardImage from "../public/pixoo-wallboard.png";
 import Link from "next/link";
