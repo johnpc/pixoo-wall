@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <title>A2 Poll</title>
+        <title>wall.jpc</title>
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <body>

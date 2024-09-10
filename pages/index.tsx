@@ -23,10 +23,12 @@ import { getCurrentMessage } from "@/helpers/get-current-message";
 import wallboardImage from "../public/pixoo-wallboard.png";
 import Link from "next/link";
 import QuestionAnswer from "@mui/icons-material/QuestionAnswer";
+import { createAIHooks } from "@aws-amplify/ui-react-ai";
+import { CircularProgress } from "@mui/joy";
 
 Amplify.configure(config);
 const client = generateClient<Schema>();
-
+const { useAIGeneration } = createAIHooks(client);
 const sheetCss = {
   width: 500,
   mx: "auto", // margin left & right
@@ -71,6 +73,19 @@ function ModeToggle() {
 }
 
 export default function Home() {
+  const [{ data, isLoading, hasError }, generateMessage] =
+    useAIGeneration("generateMessage");
+
+  console.log({ data });
+  if (hasError) {
+    console.log({ hasError, data });
+  }
+  const handleClick = () => {
+    generateMessage({
+      description:
+        "Invent a message similar to the others that have been posted",
+    });
+  };
   const [currentMessage, setCurrentMessage] =
     React.useState<Schema["Message"]["type"]>();
   const [messages, setMessages] = React.useState<Schema["Message"]["type"][]>(
@@ -112,6 +127,10 @@ export default function Home() {
     React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLInputElement>;
   const buttonRef =
     React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLButtonElement>;
+
+  if (data?.message) {
+    ref.current.value = data.message;
+  }
 
   const createMessage = async () => {
     const { errors, data: newMessage } = await client.models.Message.create({
@@ -161,6 +180,7 @@ export default function Home() {
               // html input attribute
               slotProps={{ input: { ref } }}
               name="text"
+              value={data?.message || undefined}
               type="text"
               placeholder="Have a great day!"
               onChange={onInputChange}
@@ -168,11 +188,19 @@ export default function Home() {
           </FormControl>
 
           <Button
-            disabled={buttonDisabled}
+            disabled={buttonDisabled && !data?.message}
             onClick={createMessage}
             sx={{ mt: 1 /* margin top */ }}
           >
             Post Message
+          </Button>
+          <Button
+            variant="soft"
+            disabled={isLoading}
+            onClick={handleClick}
+            sx={{ mt: 1 /* margin top */ }}
+          >
+            {isLoading ? <CircularProgress /> : "Generate AI Message"}
           </Button>
           <Typography fontSize="sm" sx={{ alignSelf: "center" }}>
             Put an anonymous message on John&apos;s wall
