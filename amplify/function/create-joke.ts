@@ -1,8 +1,9 @@
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
-import { Schema } from "../data/resource";
+import { data, Schema } from "../data/resource";
 import { env } from "$amplify/env/jpc-wall-create-joke";
 import { createMessage } from "./graphql/mutations";
+import { generateMessage } from "./queries";
 Amplify.configure(
   {
     API: {
@@ -33,14 +34,14 @@ Amplify.configure(
 
 const dataClient = generateClient<Schema>();
 const getJoke = async () => {
-  const jokeResponse = await fetch("https://icanhazdadjoke.com/", {
-    headers: {
-      Accept: "application/json",
-    },
+  const generationResponse = await dataClient.graphql({
+    query: generateMessage,
   });
-
-  const jokeJson = await jokeResponse.json();
-  return jokeJson.joke;
+  console.log({
+    generationResponse: generationResponse.data.generateMessage,
+    errors: generationResponse.errors,
+  });
+  return generationResponse.data.generateMessage!.message!;
 };
 export const addMessage = async (content: string) => {
   const messageResult = await dataClient.graphql({
