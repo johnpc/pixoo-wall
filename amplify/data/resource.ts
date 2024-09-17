@@ -11,7 +11,7 @@ const schema = a
       .generation({
         aiModel: a.ai.model("Claude 3.5 Sonnet"),
         systemPrompt:
-          "You write fun messages to put up on the wall. All messages must be less than twelve words",
+          "You write fun random messages to put up on the wall. All messages must be less than twelve words",
         inferenceConfiguration: {
           maxTokens: 200,
           temperature: 1,
