@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  pixoo-wall:
+    image: mrorbitman/pixoo-wall:latest
+    container_name: pixoo-wall
+    environment:
+      - PIXOO_IP=${PIXOO_IP}
+      - AATA_API_KEY=${AATA_API_KEY}
+    restart: unless-stopped
