@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Create a wrapper script
-RUN echo '#!/bin/sh\nwhile true; do\n  tsx scripts/update-wall.ts\n  sleep 60\ndone' > /app/run.sh
+RUN echo '#!/bin/sh\nwhile true; do\n  npx tsx scripts/update-wall.ts\n  sleep 60\ndone' > /app/run.sh
 RUN chmod +x /app/run.sh
 
 # Set the wrapper script as the entry point
