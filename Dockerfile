@@ -20,7 +20,7 @@ npm run generate-prod-config\n\
 \n\
 echo "Starting update loop..."\n\
 while true; do\n\
-  tsx scripts/update-wall.ts\n\
+  npm run pixoo\n\
   sleep 60\n\
 done' > /app/run.sh
 RUN chmod +x /app/run.sh
