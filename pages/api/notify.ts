@@ -18,9 +18,12 @@ export default async function handler(
   });
   const notificationMessage = `New message posted to John's wall: ${message}`;
   const fetchResponse = await fetch(
-    `https://ntfy.sh/${process.env.UNIQUE_NOTIFICATION_TOPIC}`,
+    `${process.env.NTFY_URL}/${process.env.UNIQUE_NOTIFICATION_TOPIC}`,
     {
       method: "POST", // PUT works too
+      headers: {
+        Authorization: process.env.NTFY_AUTH_HEADER!,
+      },
       body: notificationMessage,
     }
   );
