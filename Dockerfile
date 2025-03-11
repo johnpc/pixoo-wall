@@ -21,7 +21,7 @@ npm run generate-prod-config\n\
 echo "Starting update loop..."\n\
 while true; do\n\
   npm run pixoo\n\
-  sleep 60\n\
+  sleep 15\n\
 done' > /app/run.sh
 RUN chmod +x /app/run.sh
 
