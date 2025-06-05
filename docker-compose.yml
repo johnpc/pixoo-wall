@@ -10,4 +10,5 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - SLEEP_DURATION=${SLEEP_DURATION:-60}
     restart: unless-stopped

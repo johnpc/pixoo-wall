@@ -223,7 +223,6 @@ const drawErrorScreen = async (errorMessage: string): Promise<void> => {
       pixoo.drawText(errorLines[i], [0, yCoordinate], Color.White);
       yCoordinate += VERTICAL_SPACING;
     }
-
     await withRetry(
       async () => await pixoo.push(),
       MAX_RETRIES,
@@ -243,12 +242,6 @@ const initializePixoo = async (): Promise<PixooAPI | null> => {
 
   try {
     const pixoo = new PixooAPI(process.env.PIXOO_IP);
-    await withRetry(
-      async () => await pixoo.initialize(),
-      MAX_RETRIES,
-      RETRY_DELAY,
-      "Pixoo initialization"
-    );
     return pixoo;
   } catch (error) {
     console.error("Failed to initialize Pixoo:", error);
@@ -346,7 +339,10 @@ const main = async () => {
       // Push to device with retry
       console.log("Pushing to Pixoo display...");
       await withRetry(
-        async () => await pixoo.push(),
+        async () => {
+          await pixoo.initialize();
+          await pixoo.push();
+        },
         MAX_RETRIES,
         RETRY_DELAY,
         "Pixoo display push"
