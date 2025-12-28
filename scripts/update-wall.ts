@@ -375,4 +375,17 @@ const main = async () => {
   }
 };
 
-main();
+const EXECUTION_TIMEOUT = 50000; // 50 seconds (less than 60s loop interval)
+
+Promise.race([
+  main(),
+  new Promise((_, reject) =>
+    setTimeout(
+      () => reject(new Error("Execution timeout - script hung")),
+      EXECUTION_TIMEOUT
+    )
+  ),
+]).catch((err) => {
+  console.error("Script failed or timed out:", err);
+  process.exit(1);
+});
