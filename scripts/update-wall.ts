@@ -10,8 +10,10 @@ const VERTICAL_SPACING = 8;
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // milliseconds
 
-const sleep = async (ms = 1000) =>
+const sleep = async (ms = 1000) => {
   await new Promise((resolve) => setTimeout(resolve, ms));
+  process.stdout.write(""); // Force flush
+};
 
 // Retry wrapper function for async operations
 async function withRetry<T>(
