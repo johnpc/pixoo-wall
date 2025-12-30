@@ -31,19 +31,19 @@
     "weather-js": "^2.0.0"
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.2.1",
-    "@aws-amplify/backend-cli": "^1.2.6",
-    "@aws-sdk/client-bedrock-runtime": "^3.649.0",
-    "@types/node": "^20",
+    "@aws-amplify/backend": "^1.19.0",
+    "@aws-amplify/backend-cli": "^1.8.1",
+    "@aws-sdk/client-bedrock-runtime": "^3.958.0",
+    "@types/node": "^25",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.4",
-    "husky": "^8.0.0",
-    "lint-staged": "^15.2.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3"
   },
   "lint-staged": {
     "*.ts": [
