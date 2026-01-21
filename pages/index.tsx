@@ -124,9 +124,9 @@ export default function Home() {
   }, []);
 
   const ref =
-    React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLInputElement>;
+    React.useRef<HTMLInputElement>(null) as React.MutableRefObject<HTMLInputElement>;
   const buttonRef =
-    React.useRef<HTMLInputElement>() as React.MutableRefObject<HTMLButtonElement>;
+    React.useRef<HTMLButtonElement>(null) as React.MutableRefObject<HTMLButtonElement>;
 
   if (data?.message) {
     ref.current.value = data.message;
