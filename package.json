@@ -11,6 +11,7 @@
     "sandbox": "ampx sandbox",
     "pixoo": "tsx scripts/update-wall.ts",
     "generate-prod-config": "ampx generate outputs --app-id d3nwitg8d6m7ui --branch main",
+    "prod-config": "ampx generate outputs --app-id d3nwitg8d6m7ui --branch main --profile personal",
     "prepare": "husky install"
   },
   "dependencies": {

@@ -15,12 +15,67 @@ const sleep = async (ms = 1000) => {
   process.stdout.write(""); // Force flush
 };
 
+const powerCyclePixoo = async (): Promise<void> => {
+  const hassUrl = process.env.HASS_URL;
+  const hassToken = process.env.HASS_API_KEY;
+  const entityId = "switch.smart_plug_socket_1";
+
+  if (!hassUrl || !hassToken) {
+    console.error("HASS_URL or HASS_API_KEY not set - cannot power cycle");
+    return;
+  }
+
+  console.log("Power cycling Pixoo via Home Assistant...");
+  try {
+    await fetch(`${hassUrl}/api/services/switch/turn_off`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${hassToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ entity_id: entityId }),
+    });
+    await sleep(5000);
+    await fetch(`${hassUrl}/api/services/switch/turn_on`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${hassToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ entity_id: entityId }),
+    });
+    console.log("Power cycle complete - waiting 30s for Pixoo to boot...");
+    await sleep(30000);
+  } catch (err) {
+    console.error("Failed to power cycle Pixoo:", err);
+  }
+};
+
+// Timeout wrapper for operations that may hang
+async function withTimeout<T>(
+  operation: () => Promise<T>,
+  timeoutMs: number,
+  operationName = "operation"
+): Promise<T> {
+  return Promise.race([
+    operation(),
+    new Promise<T>((_, reject) =>
+      setTimeout(
+        () =>
+          reject(new Error(`${operationName} timed out after ${timeoutMs}ms`)),
+        timeoutMs
+      )
+    ),
+  ]);
+}
+
 // Retry wrapper function for async operations
 async function withRetry<T>(
   operation: () => Promise<T>,
   retries = MAX_RETRIES,
   delay = RETRY_DELAY,
-  operationName = "operation"
+  operationName = "operation",
+  onRetry?: () => Promise<void>
 ): Promise<T> {
   let lastError: any;
 
@@ -35,9 +90,12 @@ async function withRetry<T>(
       );
 
       if (attempt < retries) {
-        console.log(`Retrying ${operationName} in ${delay}ms...`);
-        await sleep(delay);
-        // Increase delay for next retry (exponential backoff)
+        if (onRetry) {
+          await onRetry();
+        } else {
+          console.log(`Retrying ${operationName} in ${delay}ms...`);
+          await sleep(delay);
+        }
         delay *= 1.5;
       }
     }
@@ -338,16 +396,21 @@ const main = async () => {
         yCoordinate += VERTICAL_SPACING;
       }
 
-      // Push to device with retry
+      // Push to device with retry and timeout
       console.log("Pushing to Pixoo display...");
       await withRetry(
         async () => {
-          await pixoo.initialize();
-          await pixoo.push();
+          await withTimeout(
+            () => pixoo.initialize(),
+            10000,
+            "Pixoo initialize"
+          );
+          await withTimeout(() => pixoo.push(), 10000, "Pixoo push");
         },
         MAX_RETRIES,
         RETRY_DELAY,
-        "Pixoo display push"
+        "Pixoo display push",
+        powerCyclePixoo
       );
       console.log({ pushed: true });
 
