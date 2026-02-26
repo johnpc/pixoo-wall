@@ -90,13 +90,13 @@ export default function Home() {
   const [currentMessage, setCurrentMessage] =
     React.useState<Schema["Message"]["type"]>();
   const [messages, setMessages] = React.useState<Schema["Message"]["type"][]>(
-    []
+    [],
   );
   const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(true);
 
   const sortMessages = (
     a: Schema["Message"]["type"],
-    b: Schema["Message"]["type"]
+    b: Schema["Message"]["type"],
   ) =>
     new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1;
 
@@ -125,15 +125,17 @@ export default function Home() {
   }, []);
 
   const ref = React.useRef<HTMLInputElement>(
-    null
+    null,
   ) as React.MutableRefObject<HTMLInputElement>;
   const buttonRef = React.useRef<HTMLButtonElement>(
-    null
+    null,
   ) as React.MutableRefObject<HTMLButtonElement>;
 
-  if (data?.message) {
-    ref.current.value = data.message;
-  }
+  React.useEffect(() => {
+    if (data?.message && ref.current) {
+      ref.current.value = data.message;
+    }
+  }, [data?.message]);
 
   const createMessage = async () => {
     const { errors, data: newMessage } = await client.models.Message.create({
@@ -160,8 +162,8 @@ export default function Home() {
       date.getHours() === 0
         ? 12
         : isPm
-        ? date.getHours() - 12
-        : date.getHours();
+          ? date.getHours() - 12
+          : date.getHours();
     const minutes =
       date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
     return `${date.toDateString()} at ${hours}:${minutes}${isPm ? "pm" : "am"}`;
@@ -230,7 +232,7 @@ export default function Home() {
               <Typography level="body-xs">
                 &nbsp;
                 {dateToString(
-                  new Date(currentMessage ? currentMessage.createdAt : "")
+                  new Date(currentMessage ? currentMessage.createdAt : ""),
                 )}
               </Typography>
             </ListItem>
