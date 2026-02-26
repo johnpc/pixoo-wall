@@ -401,11 +401,19 @@ const main = async () => {
       await withRetry(
         async () => {
           await withTimeout(
-            () => pixoo.initialize(),
+            async () => {
+              pixoo.initialize();
+            },
             10000,
             "Pixoo initialize"
           );
-          await withTimeout(() => pixoo.push(), 10000, "Pixoo push");
+          await withTimeout(
+            async () => {
+              await pixoo.push();
+            },
+            10000,
+            "Pixoo push"
+          );
         },
         MAX_RETRIES,
         RETRY_DELAY,
