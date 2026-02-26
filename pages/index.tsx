@@ -1,4 +1,5 @@
 import * as React from "react";
+import Head from "next/head";
 import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
 import Sheet from "@mui/joy/Sheet";
 import Typography from "@mui/joy/Typography";
@@ -104,14 +105,14 @@ export default function Home() {
     setCurrentMessage(currentMessage);
   };
 
-  async function setup() {
-    const { data } = await client.models.Message.list();
-    data.sort(sortMessages);
-    setMessages(data);
-    await setupCurrentMessage();
-  }
-
   React.useEffect(() => {
+    const setup = async () => {
+      const { data } = await client.models.Message.list();
+      data.sort(sortMessages);
+      setMessages(data);
+      await setupCurrentMessage();
+    };
+
     setup();
     const sub = client.models.Message.observeQuery().subscribe(({ items }) => {
       const data = [...items];
@@ -123,10 +124,12 @@ export default function Home() {
     return () => sub.unsubscribe();
   }, []);
 
-  const ref =
-    React.useRef<HTMLInputElement>(null) as React.MutableRefObject<HTMLInputElement>;
-  const buttonRef =
-    React.useRef<HTMLButtonElement>(null) as React.MutableRefObject<HTMLButtonElement>;
+  const ref = React.useRef<HTMLInputElement>(
+    null
+  ) as React.MutableRefObject<HTMLInputElement>;
+  const buttonRef = React.useRef<HTMLButtonElement>(
+    null
+  ) as React.MutableRefObject<HTMLButtonElement>;
 
   if (data?.message) {
     ref.current.value = data.message;
@@ -166,6 +169,9 @@ export default function Home() {
 
   return (
     <CssVarsProvider>
+      <Head>
+        <title>wall.jpc</title>
+      </Head>
       <main>
         <ModeToggle />
         <Sheet sx={sheetCss} variant="outlined">
