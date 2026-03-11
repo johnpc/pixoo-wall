@@ -7,8 +7,8 @@ dotenv.config();
 const MAX_LINE_CHARS = 17;
 const MAX_FRAME_LINES = 5;
 const VERTICAL_SPACING = 8;
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // milliseconds
+const MAX_RETRIES = 20;
+const RETRY_DELAY = 5000; // milliseconds
 
 const sleep = async (ms = 1000) => {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -55,7 +55,7 @@ const powerCyclePixoo = async (): Promise<void> => {
 async function withTimeout<T>(
   operation: () => Promise<T>,
   timeoutMs: number,
-  operationName = "operation"
+  operationName = "operation",
 ): Promise<T> {
   return Promise.race([
     operation(),
@@ -63,8 +63,8 @@ async function withTimeout<T>(
       setTimeout(
         () =>
           reject(new Error(`${operationName} timed out after ${timeoutMs}ms`)),
-        timeoutMs
-      )
+        timeoutMs,
+      ),
     ),
   ]);
 }
@@ -75,7 +75,7 @@ async function withRetry<T>(
   retries = MAX_RETRIES,
   delay = RETRY_DELAY,
   operationName = "operation",
-  onRetry?: () => Promise<void>
+  onRetry?: () => Promise<void>,
 ): Promise<T> {
   let lastError: any;
 
@@ -86,7 +86,7 @@ async function withRetry<T>(
       lastError = error;
       console.error(
         `${operationName} failed (attempt ${attempt}/${retries}):`,
-        error
+        error,
       );
 
       if (attempt < retries) {
@@ -104,7 +104,7 @@ async function withRetry<T>(
   throw new Error(
     `${operationName} failed after ${retries} attempts: ${
       lastError?.message || "Unknown error"
-    }`
+    }`,
   );
 }
 
@@ -130,12 +130,12 @@ export const getWeather = async (zipcode: string): Promise<string> => {
             (err: any, result: any) => {
               if (err) reject(err);
               else resolve(result);
-            }
+            },
           );
         }),
       MAX_RETRIES,
       RETRY_DELAY,
-      "weather fetch"
+      "weather fetch",
     );
 
     if (
@@ -161,7 +161,7 @@ const AATA_BASE_URL = "https://rt.theride.org/bustime/api/v3";
 
 const fetchData = async (
   endpoint: string,
-  args?: { [key: string]: string | number }
+  args?: { [key: string]: string | number },
 ) => {
   const allArgs = {
     ...(args ?? {}),
@@ -174,7 +174,7 @@ const fetchData = async (
       `/${endpoint}?` +
       Object.keys(allArgs)
         .map((key) => `${key}=${allArgs[key]}`)
-        .join("&")
+        .join("&"),
   );
 
   return withRetry(
@@ -182,14 +182,14 @@ const fetchData = async (
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(
-          `HTTP error ${response.status}: ${response.statusText}`
+          `HTTP error ${response.status}: ${response.statusText}`,
         );
       }
       return response.json();
     },
     MAX_RETRIES,
     RETRY_DELAY,
-    `API fetch ${endpoint}`
+    `API fetch ${endpoint}`,
   );
 };
 
@@ -251,7 +251,7 @@ export const predictArrivalTimes = async (busRoute: number, stopId: number) => {
 
 export const getBusArrivalTime = async (
   busRoute: number,
-  stopId: number
+  stopId: number,
 ): Promise<Date | null> => {
   try {
     const predictions = await predictArrivalTimes(busRoute, stopId);
@@ -287,7 +287,7 @@ const drawErrorScreen = async (errorMessage: string): Promise<void> => {
       async () => await pixoo.push(),
       MAX_RETRIES,
       RETRY_DELAY,
-      "error display push"
+      "error display push",
     );
   } catch (err) {
     console.error("Failed to draw error screen:", err);
@@ -325,7 +325,7 @@ const main = async () => {
       () => getCurrentMessage(),
       MAX_RETRIES,
       RETRY_DELAY,
-      "message fetch"
+      "message fetch",
     );
 
     // Get weather data
@@ -334,7 +334,7 @@ const main = async () => {
       () => getWeather("48103"),
       MAX_RETRIES,
       RETRY_DELAY,
-      "weather fetch"
+      "weather fetch",
     );
 
     // Get bus arrival time
@@ -343,7 +343,7 @@ const main = async () => {
       () => getBusArrivalTime(26, 1565),
       MAX_RETRIES,
       RETRY_DELAY,
-      "bus arrival fetch"
+      "bus arrival fetch",
     );
 
     // Prepare text for display
@@ -380,7 +380,7 @@ const main = async () => {
             .slice(0, 2)
             .join(":")}`,
           [0, 14],
-          [150, 250, 150] as any
+          [150, 250, 150] as any,
         );
       } else {
         pixoo.drawText(weatherString, [0, 14], [150, 250, 150] as any);
@@ -405,20 +405,20 @@ const main = async () => {
               pixoo.initialize();
             },
             10000,
-            "Pixoo initialize"
+            "Pixoo initialize",
           );
           await withTimeout(
             async () => {
               await pixoo.push();
             },
             10000,
-            "Pixoo push"
+            "Pixoo push",
           );
         },
         MAX_RETRIES,
         RETRY_DELAY,
         "Pixoo display push",
-        powerCyclePixoo
+        powerCyclePixoo,
       );
       console.log({ pushed: true });
 
@@ -435,7 +435,7 @@ const main = async () => {
     } catch (error) {
       console.error("Error during display update:", error);
       await drawErrorScreen(
-        (error as Error)?.message ?? "Error during display update"
+        (error as Error)?.message ?? "Error during display update",
       );
     }
   } catch (error) {
@@ -443,7 +443,7 @@ const main = async () => {
     // We can't use drawErrorScreen here as pixoo might not be initialized
     console.error("FATAL: Cannot recover from this error");
     await drawErrorScreen(
-      (error as Error)?.message ?? "FATAL: Cannot recover from this error"
+      (error as Error)?.message ?? "FATAL: Cannot recover from this error",
     );
   }
 };
@@ -455,8 +455,8 @@ Promise.race([
   new Promise((_, reject) =>
     setTimeout(
       () => reject(new Error("Execution timeout - script hung")),
-      EXECUTION_TIMEOUT
-    )
+      EXECUTION_TIMEOUT,
+    ),
   ),
 ]).catch((err) => {
   console.error("Script failed or timed out:", err);
