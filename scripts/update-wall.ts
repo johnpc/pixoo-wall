@@ -7,15 +7,40 @@ dotenv.config();
 const MAX_LINE_CHARS = 17;
 const MAX_FRAME_LINES = 5;
 const VERTICAL_SPACING = 8;
-const MAX_RETRIES = 20;
+const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // milliseconds
+const POWER_CYCLE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+
+let firstFailureTime: number | null = null;
 
 const sleep = async (ms = 1000) => {
   await new Promise((resolve) => setTimeout(resolve, ms));
   process.stdout.write(""); // Force flush
 };
 
+const shouldPowerCycle = (): boolean => {
+  const now = Date.now();
+  if (!firstFailureTime) {
+    firstFailureTime = now;
+    console.log("First failure recorded, starting 5-minute timer...");
+    return false;
+  }
+  const failureDuration = now - firstFailureTime;
+  console.log(`Failures ongoing for ${Math.round(failureDuration / 1000)}s`);
+  return failureDuration >= POWER_CYCLE_THRESHOLD_MS;
+};
+
+const resetFailureTracking = (): void => {
+  firstFailureTime = null;
+};
+
 const powerCyclePixoo = async (): Promise<void> => {
+  if (!shouldPowerCycle()) {
+    console.log("Not power cycling yet - waiting for 5 minutes of failures");
+    await sleep(RETRY_DELAY);
+    return;
+  }
+
   const hassUrl = process.env.HASS_URL;
   const hassToken = process.env.HASS_API_KEY;
   const entityId = "switch.smart_plug_socket_1";
@@ -25,7 +50,7 @@ const powerCyclePixoo = async (): Promise<void> => {
     return;
   }
 
-  console.log("Power cycling Pixoo via Home Assistant...");
+  console.log("Power cycling Pixoo via Home Assistant (5+ min of failures)...");
   try {
     await fetch(`${hassUrl}/api/services/switch/turn_off`, {
       method: "POST",
@@ -46,6 +71,7 @@ const powerCyclePixoo = async (): Promise<void> => {
     });
     console.log("Power cycle complete - waiting 30s for Pixoo to boot...");
     await sleep(30000);
+    resetFailureTracking();
   } catch (err) {
     console.error("Failed to power cycle Pixoo:", err);
   }
@@ -414,6 +440,7 @@ const main = async () => {
             10000,
             "Pixoo push",
           );
+          resetFailureTracking();
         },
         MAX_RETRIES,
         RETRY_DELAY,
