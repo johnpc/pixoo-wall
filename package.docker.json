@@ -1,0 +1,16 @@
+{
+  "name": "pixoo-script",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "aws-amplify": "^6.15.10",
+    "dotenv": "^17.2.3",
+    "pixoo-api": "^0.2.3",
+    "weather-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.20.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,30 +1,19 @@
-# Use Node.js base image
-FROM node:20-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install deps first (cached unless package*.json changes)
-COPY package*.json ./
-RUN npm ci
+# Use minimal package.json
+COPY package.docker.json ./package.json
+RUN npm install
 
-# Copy source (separate layer - only rebuilds on code changes)
+# Copy only what the script needs
 COPY scripts/ ./scripts/
 COPY helpers/ ./helpers/
 COPY amplify/ ./amplify/
-COPY pages/ ./pages/
-COPY *.ts ./
-COPY *.json ./
-COPY *.js ./
+COPY tsconfig.json ./
+COPY amplify_outputs.json ./
 
 # Create wrapper script
-RUN echo '#!/bin/sh\n\
-echo "Generating production config..."\n\
-npm run generate-prod-config\n\
-SLEEP_DURATION=${SLEEP_DURATION:-60}\n\
-echo "Starting update loop with ${SLEEP_DURATION}s interval..."\n\
-while true; do\n\
-  timeout 55s npm run pixoo || echo "Script timed out or failed"\n\
-  sleep ${SLEEP_DURATION}\n\
-done' > /app/run.sh && chmod +x /app/run.sh
+RUN echo '#!/bin/sh\nSLEEP_DURATION=${SLEEP_DURATION:-60}\necho "Starting update loop with ${SLEEP_DURATION}s interval..."\nwhile true; do\n  timeout 55s npx tsx scripts/update-wall.ts || echo "Script timed out or failed"\n  sleep ${SLEEP_DURATION}\ndone' > /app/run.sh && chmod +x /app/run.sh
 
 CMD ["/app/run.sh"]
