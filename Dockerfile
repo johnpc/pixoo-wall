@@ -14,6 +14,15 @@ COPY tsconfig.json ./
 COPY amplify_outputs.json ./
 
 # Create wrapper script
-RUN echo '#!/bin/sh\nSLEEP_DURATION=${SLEEP_DURATION:-60}\necho "Starting update loop with ${SLEEP_DURATION}s interval..."\nwhile true; do\n  timeout 55s npx tsx scripts/update-wall.ts || echo "Script timed out or failed"\n  sleep ${SLEEP_DURATION}\ndone' > /app/run.sh && chmod +x /app/run.sh
+COPY <<'EOF' /app/run.sh
+#!/bin/sh
+SLEEP_DURATION=${SLEEP_DURATION:-60}
+echo "Starting update loop with ${SLEEP_DURATION}s interval..."
+while true; do
+  timeout 55s npx tsx scripts/update-wall.ts || echo "Script timed out or failed"
+  sleep ${SLEEP_DURATION}
+done
+EOF
+RUN chmod +x /app/run.sh
 
 CMD ["/app/run.sh"]
