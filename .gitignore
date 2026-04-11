@@ -35,8 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# amplify
+# amplify - keep amplify_outputs.json for Docker
 .amplify
 amplifyconfiguration*
-amplify_outputs*
 .env
