@@ -10,8 +10,30 @@ const VERTICAL_SPACING = 8;
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 5000; // milliseconds
 const POWER_CYCLE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+const FAILURE_STATE_FILE = "/tmp/pixoo-failure-state.json";
 
-let firstFailureTime: number | null = null;
+import * as fs from "fs";
+
+const loadFailureState = (): number | null => {
+  try {
+    if (fs.existsSync(FAILURE_STATE_FILE)) {
+      const data = JSON.parse(fs.readFileSync(FAILURE_STATE_FILE, "utf8"));
+      return data.firstFailureTime ?? null;
+    }
+  } catch {}
+  return null;
+};
+
+const saveFailureState = (time: number | null): void => {
+  try {
+    fs.writeFileSync(
+      FAILURE_STATE_FILE,
+      JSON.stringify({ firstFailureTime: time }),
+    );
+  } catch {}
+};
+
+let firstFailureTime: number | null = loadFailureState();
 
 const sleep = async (ms = 1000) => {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -22,6 +44,7 @@ const shouldPowerCycle = (): boolean => {
   const now = Date.now();
   if (!firstFailureTime) {
     firstFailureTime = now;
+    saveFailureState(firstFailureTime);
     console.log("First failure recorded, starting 5-minute timer...");
     return false;
   }
@@ -32,6 +55,7 @@ const shouldPowerCycle = (): boolean => {
 
 const resetFailureTracking = (): void => {
   firstFailureTime = null;
+  saveFailureState(null);
 };
 
 const powerCyclePixoo = async (): Promise<void> => {
