@@ -2,10 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Use docker-specific package with lockfile
+# Use docker-specific package
 COPY package.docker.json ./package.json
-COPY package-lock.docker.json ./package-lock.json
-RUN npm ci
+RUN npm install --omit=dev
 
 # Copy only what the script needs
 COPY scripts/ ./scripts/
