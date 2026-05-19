@@ -1,6 +1,6 @@
 import * as React from "react";
 import Head from "next/head";
-import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
+import { useColorScheme } from "@mui/joy/styles";
 import Sheet from "@mui/joy/Sheet";
 import Typography from "@mui/joy/Typography";
 import FormControl from "@mui/joy/FormControl";
@@ -15,6 +15,7 @@ import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListDivider from "@mui/joy/ListDivider";
 import Avatar from "@mui/joy/Avatar";
 import AspectRatio from "@mui/joy/AspectRatio";
+import Box from "@mui/joy/Box";
 import Image from "next/image";
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
@@ -170,12 +171,22 @@ export default function Home() {
   };
 
   return (
-    <CssVarsProvider>
+    <>
       <Head>
         <title>wall.jpc</title>
       </Head>
-      <main>
-        <ModeToggle />
+      <Box
+        component="main"
+        sx={{
+          minHeight: "100vh",
+          bgcolor: "background.body",
+          py: 2,
+          px: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
+          <ModeToggle />
+        </Box>
         <Sheet sx={sheetCss} variant="outlined">
           <div>
             <Typography level="h4" component="h1">
@@ -293,7 +304,7 @@ export default function Home() {
             </List>
           </div>
         </Sheet>
-      </main>
-    </CssVarsProvider>
+      </Box>
+    </>
   );
 }
