@@ -30,6 +30,9 @@
     #00000080
   );
 
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
   --callout-rgb: 238, 240, 241;
   --callout-border-rgb: 172, 175, 176;
   --card-rgb: 180, 185, 188;
@@ -56,6 +59,9 @@
     #ffffff10,
     #ffffff80
   );
+
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 
   --callout-rgb: 20, 20, 20;
   --callout-border-rgb: 108, 108, 108;
