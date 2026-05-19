@@ -14,4 +14,4 @@ runs:
     # only build if cache miss
     - if: steps.build-cache.outputs.cache-hit != 'true'
       shell: bash
-      run: echo "{}" >> amplify_outputs.json && npm run build
+      run: echo "{}" > amplify_outputs.json && npm run build
