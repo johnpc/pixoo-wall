@@ -231,23 +231,32 @@ export default function Home() {
               <b>Current message:</b>
             </Typography>
           </div>
-          <div key={inset || "default"}>
-            <ListItem>
-              <ListItemDecorator>
-                <Avatar size="sm" src="/static/images/avatar/1.jpg" />
-                &nbsp;
-              </ListItemDecorator>
-              <ListItemContent>
-                {currentMessage ? currentMessage.content : ""}
-              </ListItemContent>
-              <Typography level="body-xs">
-                &nbsp;
-                {dateToString(
-                  new Date(currentMessage ? currentMessage.createdAt : ""),
-                )}
-              </Typography>
-            </ListItem>
-          </div>
+          {currentMessage ? (
+            <div key={inset || "default"}>
+              <ListItem>
+                <ListItemDecorator>
+                  <Avatar size="sm" src="/static/images/avatar/1.jpg" />
+                  &nbsp;
+                </ListItemDecorator>
+                <ListItemContent>{currentMessage.content}</ListItemContent>
+                <Typography level="body-xs">
+                  &nbsp;
+                  {dateToString(new Date(currentMessage.createdAt))}
+                </Typography>
+              </ListItem>
+            </div>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                py: 2,
+              }}
+            >
+              <CircularProgress size="sm" />
+            </Box>
+          )}
         </Sheet>
         <Sheet sx={sheetCss} variant="outlined">
           <Typography level="h4" component="h1">
