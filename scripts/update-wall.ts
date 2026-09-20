@@ -170,7 +170,69 @@ const getLinesOfText = (message: string): string[] => {
   return [...chunks(message, MAX_LINE_CHARS)].map((line) => line.join(""));
 };
 
+// Short labels so "<condition> - <temp>" fits the 64px display line
+const HASS_CONDITION_LABELS: { [condition: string]: string } = {
+  "clear-night": "Clear",
+  cloudy: "Cloudy",
+  fog: "Fog",
+  hail: "Hail",
+  lightning: "Storms",
+  "lightning-rainy": "Storms",
+  partlycloudy: "Cloudy",
+  pouring: "Pouring",
+  rainy: "Rain",
+  snowy: "Snow",
+  "snowy-rainy": "Sleet",
+  sunny: "Sunny",
+  windy: "Windy",
+  "windy-variant": "Windy",
+  exceptional: "Alert",
+};
+
+const fetchHassState = async (entityId: string): Promise<any> => {
+  const response = await fetch(
+    `${process.env.HASS_URL}/api/states/${entityId}`,
+    { headers: { Authorization: `Bearer ${process.env.HASS_API_KEY}` } }
+  );
+  if (!response.ok) {
+    throw new Error(`HTTP error ${response.status} fetching ${entityId}`);
+  }
+  return response.json();
+};
+
+// Reads the personal weather station via Home Assistant
+const getWeatherFromHass = async (): Promise<string> => {
+  const [forecast, temperature] = await withRetry(
+    () =>
+      Promise.all([
+        fetchHassState("weather.forecast_home_weather"),
+        fetchHassState("sensor.johnpc_weather_temperature"),
+      ]),
+    MAX_RETRIES,
+    RETRY_DELAY,
+    "weather station fetch"
+  );
+
+  const temp = Math.round(parseFloat(temperature.state));
+  if (isNaN(temp)) {
+    throw new Error(`Bad temperature state: ${temperature.state}`);
+  }
+  const condition = HASS_CONDITION_LABELS[forecast.state] ?? forecast.state;
+  return `${condition} - ${temp}`;
+};
+
 export const getWeather = async (zipcode: string): Promise<string> => {
+  if (process.env.HASS_URL && process.env.HASS_API_KEY) {
+    try {
+      return await getWeatherFromHass();
+    } catch (error) {
+      console.error(
+        "Weather station fetch failed, falling back to weather-js:",
+        error
+      );
+    }
+  }
+
   try {
     const weatherResponse: any = await withRetry(
       () =>
