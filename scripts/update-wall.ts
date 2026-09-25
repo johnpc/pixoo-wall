@@ -67,7 +67,7 @@ const powerCyclePixoo = async (): Promise<void> => {
 
   const hassUrl = process.env.HASS_URL;
   const hassToken = process.env.HASS_API_KEY;
-  const entityId = "switch.smart_plug_socket_1";
+  const entityId = process.env.PIXOO_PLUG_ENTITY_ID ?? "switch.tapo_p100";
 
   if (!hassUrl || !hassToken) {
     console.error("HASS_URL or HASS_API_KEY not set - cannot power cycle");
@@ -192,7 +192,7 @@ const HASS_CONDITION_LABELS: { [condition: string]: string } = {
 const fetchHassState = async (entityId: string): Promise<any> => {
   const response = await fetch(
     `${process.env.HASS_URL}/api/states/${entityId}`,
-    { headers: { Authorization: `Bearer ${process.env.HASS_API_KEY}` } }
+    { headers: { Authorization: `Bearer ${process.env.HASS_API_KEY}` } },
   );
   if (!response.ok) {
     throw new Error(`HTTP error ${response.status} fetching ${entityId}`);
@@ -210,7 +210,7 @@ const getWeatherFromHass = async (): Promise<string> => {
       ]),
     MAX_RETRIES,
     RETRY_DELAY,
-    "weather station fetch"
+    "weather station fetch",
   );
 
   const temp = Math.round(parseFloat(temperature.state));
@@ -228,7 +228,7 @@ export const getWeather = async (zipcode: string): Promise<string> => {
     } catch (error) {
       console.error(
         "Weather station fetch failed, falling back to weather-js:",
-        error
+        error,
       );
     }
   }
