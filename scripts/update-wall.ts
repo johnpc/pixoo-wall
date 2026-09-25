@@ -67,7 +67,8 @@ const powerCyclePixoo = async (): Promise<void> => {
 
   const hassUrl = process.env.HASS_URL;
   const hassToken = process.env.HASS_API_KEY;
-  const entityId = process.env.PIXOO_PLUG_ENTITY_ID ?? "switch.tapo_p100";
+  const entityId =
+    process.env.PIXOO_PLUG_ENTITY_ID ?? "switch.pixoo_smart_plug";
 
   if (!hassUrl || !hassToken) {
     console.error("HASS_URL or HASS_API_KEY not set - cannot power cycle");
