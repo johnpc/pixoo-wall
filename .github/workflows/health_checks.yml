@@ -9,18 +9,21 @@ on:
       - main
   workflow_dispatch:
 
+# Self-hosted Mac Mini. This workflow also runs on pull_request, and
+# self-hosted runners on a public repo are unsafe for fork PRs (arbitrary
+# code execution) — so every job here only runs for push-to-main or a PR
+# authored by the repo owner. Everyone else's PRs simply skip these jobs.
 jobs:
   install:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
+    runs-on: [self-hosted, mac-mini]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_node
       - uses: ./.github/actions/install_with_cache
   build:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
+    runs-on: [self-hosted, mac-mini]
     needs:
       - install
     steps:
@@ -28,12 +31,10 @@ jobs:
       - uses: ./.github/actions/setup_node
       - uses: ./.github/actions/build_with_cache
   test_with_coverage:
+    if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
     needs:
       - install
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: [self-hosted, mac-mini]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_node
@@ -43,7 +44,8 @@ jobs:
         env:
           ADMIN_API_KEY: ADMIN_API_KEY
   lint:
-    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
+    runs-on: [self-hosted, mac-mini]
     needs:
       - install
     steps:
