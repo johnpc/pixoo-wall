@@ -14,6 +14,7 @@ export const onCreateMessage =
     content
     createdAt
     id
+    type
     updatedAt
     __typename
   }
@@ -28,6 +29,7 @@ export const onDeleteMessage =
     content
     createdAt
     id
+    type
     updatedAt
     __typename
   }
@@ -42,6 +44,7 @@ export const onUpdateMessage =
     content
     createdAt
     id
+    type
     updatedAt
     __typename
   }

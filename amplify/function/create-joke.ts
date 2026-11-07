@@ -3,6 +3,7 @@ import { generateClient } from "aws-amplify/data";
 import { Schema } from "../data/resource";
 import { env } from "$amplify/env/jpc-wall-create-joke";
 import { createMessage } from "./graphql/mutations";
+import { MESSAGE_TYPE } from "../data/message-type";
 Amplify.configure(
   {
     API: {
@@ -28,7 +29,7 @@ Amplify.configure(
         },
       },
     },
-  }
+  },
 );
 
 const dataClient = generateClient<Schema>();
@@ -48,6 +49,8 @@ export const addMessage = async (content: string) => {
     variables: {
       input: {
         content,
+        type: MESSAGE_TYPE,
+        createdAt: new Date().toISOString(),
       },
     },
   });

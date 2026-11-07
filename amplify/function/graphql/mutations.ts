@@ -16,6 +16,7 @@ export const createMessage = /* GraphQL */ `mutation CreateMessage(
     content
     createdAt
     id
+    type
     updatedAt
     __typename
   }
@@ -32,6 +33,7 @@ export const deleteMessage = /* GraphQL */ `mutation DeleteMessage(
     content
     createdAt
     id
+    type
     updatedAt
     __typename
   }
@@ -48,6 +50,7 @@ export const updateMessage = /* GraphQL */ `mutation UpdateMessage(
     content
     createdAt
     id
+    type
     updatedAt
     __typename
   }
