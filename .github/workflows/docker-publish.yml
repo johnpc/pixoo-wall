@@ -10,6 +10,7 @@ jobs:
     # Self-hosted Mac Mini (via Colima/Docker). Safe here with no gate needed:
     # this workflow only triggers on tag pushes, never pull_request.
     runs-on: [self-hosted, mac-mini]
+    timeout-minutes: 20
     permissions:
       contents: write
       packages: write

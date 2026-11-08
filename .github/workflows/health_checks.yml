@@ -17,6 +17,7 @@ jobs:
   install:
     if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
     runs-on: [self-hosted, mac-mini]
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_node
@@ -24,6 +25,7 @@ jobs:
   build:
     if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
     runs-on: [self-hosted, mac-mini]
+    timeout-minutes: 20
     needs:
       - install
     steps:
@@ -35,6 +37,7 @@ jobs:
     needs:
       - install
     runs-on: [self-hosted, mac-mini]
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup_node
@@ -46,6 +49,7 @@ jobs:
   lint:
     if: github.event_name != 'pull_request' || github.event.pull_request.user.login == 'johnpc'
     runs-on: [self-hosted, mac-mini]
+    timeout-minutes: 15
     needs:
       - install
     steps:
