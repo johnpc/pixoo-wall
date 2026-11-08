@@ -44,13 +44,19 @@
               "isRequired": false,
               "attributes": []
             },
+            "type": {
+              "name": "type",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "createdAt": {
               "name": "createdAt",
               "isArray": false,
               "type": "AWSDateTime",
-              "isRequired": false,
-              "attributes": [],
-              "isReadOnly": true
+              "isRequired": true,
+              "attributes": []
             },
             "updatedAt": {
               "name": "updatedAt",
@@ -67,6 +73,14 @@
             {
               "type": "model",
               "properties": {}
+            },
+            {
+              "type": "key",
+              "properties": {
+                "name": "messagesByTypeAndCreatedAt",
+                "queryField": "listMessagesByDate",
+                "fields": ["type", "createdAt"]
+              }
             },
             {
               "type": "auth",

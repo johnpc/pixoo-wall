@@ -2,11 +2,17 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
+export type GenerateMessageReturnType = {
+  __typename: "GenerateMessageReturnType";
+  message?: string | null;
+};
+
 export type Message = {
   __typename: "Message";
   content?: string | null;
   createdAt: string;
   id: string;
+  type?: string | null;
   updatedAt: string;
 };
 
@@ -17,6 +23,7 @@ export type ModelMessageFilterInput = {
   id?: ModelIDInput | null;
   not?: ModelMessageFilterInput | null;
   or?: Array<ModelMessageFilterInput | null> | null;
+  type?: ModelStringInput | null;
   updatedAt?: ModelStringInput | null;
 };
 
@@ -81,18 +88,36 @@ export type ModelMessageConnection = {
   nextToken?: string | null;
 };
 
+export type ModelStringKeyConditionInput = {
+  beginsWith?: string | null;
+  between?: Array<string | null> | null;
+  eq?: string | null;
+  ge?: string | null;
+  gt?: string | null;
+  le?: string | null;
+  lt?: string | null;
+};
+
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
 export type ModelMessageConditionInput = {
   and?: Array<ModelMessageConditionInput | null> | null;
   content?: ModelStringInput | null;
   createdAt?: ModelStringInput | null;
   not?: ModelMessageConditionInput | null;
   or?: Array<ModelMessageConditionInput | null> | null;
+  type?: ModelStringInput | null;
   updatedAt?: ModelStringInput | null;
 };
 
 export type CreateMessageInput = {
   content?: string | null;
+  createdAt?: string | null;
   id?: string | null;
+  type?: string | null;
 };
 
 export type DeleteMessageInput = {
@@ -101,7 +126,9 @@ export type DeleteMessageInput = {
 
 export type UpdateMessageInput = {
   content?: string | null;
+  createdAt?: string | null;
   id: string;
+  type?: string | null;
 };
 
 export type ModelSubscriptionMessageFilterInput = {
@@ -110,6 +137,7 @@ export type ModelSubscriptionMessageFilterInput = {
   createdAt?: ModelSubscriptionStringInput | null;
   id?: ModelSubscriptionIDInput | null;
   or?: Array<ModelSubscriptionMessageFilterInput | null> | null;
+  type?: ModelSubscriptionStringInput | null;
   updatedAt?: ModelSubscriptionStringInput | null;
 };
 
@@ -143,6 +171,17 @@ export type ModelSubscriptionIDInput = {
   notIn?: Array<string | null> | null;
 };
 
+export type GenerateMessageQueryVariables = {
+  description?: string | null;
+};
+
+export type GenerateMessageQuery = {
+  generateMessage?: {
+    __typename: "GenerateMessageReturnType";
+    message?: string | null;
+  } | null;
+};
+
 export type GetMessageQueryVariables = {
   id: string;
 };
@@ -153,6 +192,7 @@ export type GetMessageQuery = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };
@@ -171,6 +211,31 @@ export type ListMessagesQuery = {
       content?: string | null;
       createdAt: string;
       id: string;
+      type?: string | null;
+      updatedAt: string;
+    } | null>;
+    nextToken?: string | null;
+  } | null;
+};
+
+export type ListMessagesByDateQueryVariables = {
+  createdAt?: ModelStringKeyConditionInput | null;
+  filter?: ModelMessageFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+  sortDirection?: ModelSortDirection | null;
+  type: string;
+};
+
+export type ListMessagesByDateQuery = {
+  listMessagesByDate?: {
+    __typename: "ModelMessageConnection";
+    items: Array<{
+      __typename: "Message";
+      content?: string | null;
+      createdAt: string;
+      id: string;
+      type?: string | null;
       updatedAt: string;
     } | null>;
     nextToken?: string | null;
@@ -188,6 +253,7 @@ export type CreateMessageMutation = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };
@@ -203,6 +269,7 @@ export type DeleteMessageMutation = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };
@@ -218,6 +285,7 @@ export type UpdateMessageMutation = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };
@@ -232,6 +300,7 @@ export type OnCreateMessageSubscription = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };
@@ -246,6 +315,7 @@ export type OnDeleteMessageSubscription = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };
@@ -260,6 +330,7 @@ export type OnUpdateMessageSubscription = {
     content?: string | null;
     createdAt: string;
     id: string;
+    type?: string | null;
     updatedAt: string;
   } | null;
 };

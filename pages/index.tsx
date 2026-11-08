@@ -21,7 +21,11 @@ import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 import { Amplify } from "aws-amplify";
 import config from "../amplify_outputs.json";
-import { getCurrentMessage } from "@/helpers/get-current-message";
+import {
+  listRecentMessages,
+  type Message,
+} from "@/helpers/get-current-message";
+import { MESSAGE_TYPE } from "@/amplify/data/message-type";
 import wallboardImage from "../public/pixoo-wallboard.png";
 import Link from "next/link";
 import QuestionAnswer from "@mui/icons-material/QuestionAnswer";
@@ -31,6 +35,7 @@ import { CircularProgress } from "@mui/joy";
 Amplify.configure(config);
 const client = generateClient<Schema>();
 const { useAIGeneration } = createAIHooks(client);
+const RECENT_MESSAGE_LIMIT = 50;
 const sheetCss = {
   width: 500,
   mx: "auto", // margin left & right
@@ -88,38 +93,34 @@ export default function Home() {
         "Invent a message similar to the others that have been posted",
     });
   };
-  const [currentMessage, setCurrentMessage] =
-    React.useState<Schema["Message"]["type"]>();
-  const [messages, setMessages] = React.useState<Schema["Message"]["type"][]>(
-    [],
-  );
+  const [currentMessage, setCurrentMessage] = React.useState<Message>();
+  const [messages, setMessages] = React.useState<Message[]>([]);
   const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(true);
 
-  const sortMessages = (
-    a: Schema["Message"]["type"],
-    b: Schema["Message"]["type"],
-  ) =>
+  const sortMessages = (a: Message, b: Message) =>
     new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime() ? 1 : -1;
 
-  const setupCurrentMessage = async () => {
-    const currentMessage = await getCurrentMessage();
-    setCurrentMessage(currentMessage);
-  };
-
   React.useEffect(() => {
+    // Initial load: one indexed query (newest first) instead of scanning the
+    // whole table. New posts arrive via the create subscription and are
+    // prepended, so no re-fetch is needed.
     const setup = async () => {
-      const { data } = await client.models.Message.list();
-      data.sort(sortMessages);
-      setMessages(data);
-      await setupCurrentMessage();
+      const recent = await listRecentMessages(RECENT_MESSAGE_LIMIT);
+      setMessages(recent);
+      setCurrentMessage(recent[0]);
     };
 
     setup();
-    const sub = client.models.Message.observeQuery().subscribe(({ items }) => {
-      const data = [...items];
-      data.sort(sortMessages);
-      setMessages(data);
-      setupCurrentMessage();
+    const sub = client.models.Message.onCreate().subscribe({
+      next: (created) => {
+        setMessages((previous) =>
+          [created, ...previous]
+            .sort(sortMessages)
+            .slice(0, RECENT_MESSAGE_LIMIT),
+        );
+        setCurrentMessage(created);
+      },
+      error: (error) => console.error("Message.onCreate failed", error),
     });
 
     return () => sub.unsubscribe();
@@ -141,6 +142,8 @@ export default function Home() {
   const createMessage = async () => {
     const { errors, data: newMessage } = await client.models.Message.create({
       content: ref.current.value,
+      type: MESSAGE_TYPE,
+      createdAt: new Date().toISOString(),
     });
     console.log(errors, newMessage);
     ref.current.value = "";

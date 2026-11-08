@@ -1,11 +1,21 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { createJokeFunction } from "../function/resource";
+import { MESSAGE_TYPE } from "./message-type";
 const schema = a
   .schema({
     Message: a
       .model({
         content: a.string(),
+        // Constant partition key so the newest message is a single Query
+        // on the GSI below instead of a full-table pagination.
+        type: a.string().default(MESSAGE_TYPE),
+        // Declared explicitly so it can be the GSI sort key; AppSync still
+        // auto-populates it on create.
+        createdAt: a.datetime().required(),
       })
+      .secondaryIndexes((index) => [
+        index("type").sortKeys(["createdAt"]).queryField("listMessagesByDate"),
+      ])
       .authorization((allow) => [allow.guest().to(["create", "read"])]),
     generateMessage: a
       .generation({
@@ -31,12 +41,12 @@ const schema = a
       .returns(
         a.customType({
           message: a.string(),
-        })
+        }),
       )
       .authorization((allow) => allow.guest()),
   })
   .authorization((allow) =>
-    allow.resource(createJokeFunction).to(["query", "mutate", "listen"])
+    allow.resource(createJokeFunction).to(["query", "mutate", "listen"]),
   );
 
 export type Schema = ClientSchema<typeof schema>;
